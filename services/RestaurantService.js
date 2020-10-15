@@ -1,7 +1,7 @@
 const Restaurant = require('../models/Restaurant');
 const service = {};
 
-service.create = async({title, description}) => {
+service.create = async({name, email, password, description, phone, rating}) => {
     let serviceResponse = {
         success: true,
         content: {
@@ -11,8 +11,12 @@ service.create = async({title, description}) => {
 
     try{
         const restaurant = new Restaurant({
-            title,
-            description
+            name,
+            email,
+            password,
+            description,
+            phone,
+            rating
         });
         
         const restaurantSaved = await restaurant.save();
