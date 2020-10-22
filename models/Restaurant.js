@@ -13,6 +13,12 @@ const RestaurantSchema = new Schema({
     facebook: String,
     instagram: String,
     rating: Number,
+    // savedProducts: {
+    //     type: [{
+    //         type: mongoose.Schema.Types.ObjectId,
+    //         ref: "Product"
+    //     }]
+    // }
 
 
 });
