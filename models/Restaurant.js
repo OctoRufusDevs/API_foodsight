@@ -1,10 +1,11 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const crypto = require('crypto');
 
 const RestaurantSchema = new Schema({
     name: String,
     email: String,
-    password: String,
+    hashedPassword: String,
     photo: String,
     location: String,
     description: String,
@@ -13,15 +14,18 @@ const RestaurantSchema = new Schema({
     facebook: String,
     instagram: String,
     rating: Number,
-    // savedProducts: {
-    //     type: [{
-    //         type: mongoose.Schema.Types.ObjectId,
-    //         ref: "Product"
-    //     }]
-    // }
-
-
 });
+
+RestaurantSchema
+    .virtual("password")
+    .set(function(password){
+        this.hashedPassword = crypto.createHmac("sha256", password).digest("hex");
+    });
+    RestaurantSchema.methods = {
+        comparePassword: function(password){
+            return (crypto.createHmac("sha256", password).digest("hex") === this.hashedPassword);
+        }
+    }
 
 module.exports = mongoose.model("Restaurant", RestaurantSchema);
 

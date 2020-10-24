@@ -11,12 +11,13 @@ controller.createProduct = async(req, res) => {
         return res.status(400).json(fieldsValidation.content);
     }
 
+    const {restaurant} = req;
     try{   
-        const createProduct = await productService.create(req.body);
+        const createProduct = await productService.create(req.body,restaurant._id);
         if(!createProduct.success){
             return res.status(409).json(createProduct.content);
         }
-        console.log(req.body);
+        
         return res.status(201).json(createProduct.content);
     }catch(e){
         return res.status(500).json({error: e.message});
@@ -112,4 +113,6 @@ controller.deleteOneById = async (req, res) => {
         });
     }
 }
+
+
 module.exports = controller;

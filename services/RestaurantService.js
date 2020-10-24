@@ -28,6 +28,25 @@ service.verifyRegisterFields = ({name, email, password, description, phone, rati
     return serviceResponse
 };
 
+service.verifyLoginFields = ({email, password}) =>{
+    let serviceResponse = {
+		success: true,
+		content: {}
+	}
+
+	if (!email || !password) { 
+		serviceResponse = {
+			success: false,
+			content: {
+				error: "Required fields empty"
+			}
+		}
+
+		return serviceResponse;
+	}
+
+	return serviceResponse;
+}
 service.verifyUpdatedFields = ({name, email, password, description, phone, rating })=>{
     let serviceResponse={
         success:true,
@@ -188,6 +207,29 @@ service.deleteOneById = async (_id) =>{
         throw e;
     }
 
+}
+
+service.findOneByEmail = async(email) => {
+    let serviceResponse = {
+        success: true,
+        content: {},
+    }
+    try{
+        const restaurant = await RestaurantModel.findOne({email: email}).exec();
+        if(!restaurant){
+            serviceResponse = {
+                success: false,
+                content: {
+                    error: "This email has not been registered",
+                }
+            }
+        }else{
+            serviceResponse.content = restaurant;
+        }
+        return serviceResponse;
+    }catch(e){
+        throw new Error ("Internal Server Error");
+    }
 }
 
 module.exports = service;

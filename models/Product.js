@@ -19,12 +19,12 @@ const ProductSchema = new Schema({
         type: Number,
         default: 0,
     },
-    productsRestaurant: {
-        // type: mongoose.Schema.Types.ObjectId,
-        // ref: "Restaurant",
-        // required: true,
-        type: String,
+    restaurant: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Restaurant",
         required: true,
+        // type: String,
+        // required: true,
     }
 });
 
