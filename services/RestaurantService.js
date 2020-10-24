@@ -97,7 +97,7 @@ service.create = async({name, email, password, description, phone, rating}) => {
             serviceResponse = {
                 success: false,
                 content: {
-                    error: "Post not created"
+                    error: "Restaurant not created"
                 }
             }
         }
