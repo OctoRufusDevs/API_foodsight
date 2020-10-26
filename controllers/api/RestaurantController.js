@@ -5,6 +5,11 @@ controller.createRestaurant = async(req, res) => {
     const {body} = req;
     try{
        
+        const check = await RestaurantService.verifyRegisterFields(body);
+        if(!check.success){
+            return res.status(400).json( check.content);
+        }
+
         const prueba = await RestaurantService.create(body);
         console.log(body);
         return res.status(201).json(prueba.content);

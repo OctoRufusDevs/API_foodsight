@@ -81,7 +81,7 @@ service.create = async({name, email, password, description, phone, rating, photo
     let serviceResponse = {
         success: true,
         content: {
-            message: "Restaurant created",
+            message: "Restaurant created I think...",
         }
     }
 
@@ -104,6 +104,14 @@ service.create = async({name, email, password, description, phone, rating, photo
                 success: false,
                 content: {
                     error: "Restaurant not created"
+                }
+            }
+        }else{
+            serviceResponse = {
+                success: true,
+                content: {
+                    id: restaurantSaved._id,
+                    message: "Restaurant created",
                 }
             }
         }
