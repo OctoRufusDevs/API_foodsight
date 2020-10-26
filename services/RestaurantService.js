@@ -2,12 +2,12 @@ const RestaurantModel = require('../models/Restaurant');
 const emailRegex = new RegExp("^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$");
 const service = {};
 
-service.verifyRegisterFields = ({name, email, password, description, phone, rating }) => {
+service.verifyRegisterFields = ({name, email, password, description, phone, rating ,photo, facebook, instagram}) => {
     let serviceResponse = {
         success:true,
         content:{}
     }
-    if(!description || !email || !password || !name || !phone || !rating){
+    if(!description || !email || !password || !name || !phone || !rating || !photo || !facebook || !instagram){
         serviceResponse = {
             success: false,
             content: {
@@ -47,7 +47,7 @@ service.verifyLoginFields = ({email, password}) =>{
 
 	return serviceResponse;
 }
-service.verifyUpdatedFields = ({name, email, password, description, phone, rating })=>{
+service.verifyUpdatedFields = ({name, email, password, description, phone, rating ,photo, facebook, instagram})=>{
     let serviceResponse={
         success:true,
         content: {}
@@ -57,6 +57,9 @@ service.verifyUpdatedFields = ({name, email, password, description, phone, ratin
     if(phone) serviceResponse.content.phone = phone;
     if(password) serviceResponse.content.password = password;
     if(description) serviceResponse.content.description = description;
+    if(photo) serviceResponse.photo = photo;
+    if(facebook) serviceResponse.facebook = facebook;
+    if(instagram) serviceResponse.instagram = instagram;
     if(rating) serviceResponse.content.rating = rating;
 
     if(email){
@@ -74,7 +77,7 @@ service.verifyUpdatedFields = ({name, email, password, description, phone, ratin
     return serviceResponse;
 }
 
-service.create = async({name, email, password, description, phone, rating}) => {
+service.create = async({name, email, password, description, phone, rating, photo, facebook, instagram}) => {
     let serviceResponse = {
         success: true,
         content: {
@@ -89,7 +92,10 @@ service.create = async({name, email, password, description, phone, rating}) => {
             password,
             description,
             phone,
-            rating
+            rating,
+            photo,
+            facebook,
+            instagram
         });
         
         const restaurantSaved = await restaurant.save();
