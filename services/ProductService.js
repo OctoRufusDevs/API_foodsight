@@ -44,7 +44,7 @@ service.verifyUpdateFields = ({name, description, price, image}) => {
     return serviceResponse;
 }
 
-service.create = async({name, description, price, image}, restaurantID ) => {
+service.create = async({name, description, price}, imageurl, restaurantID ) => {
     let serviceResponse = {
         success: true,
         content: {
@@ -57,7 +57,7 @@ service.create = async({name, description, price, image}, restaurantID ) => {
             name,
             description,
             price,
-            image,
+            image: imageurl,
             restaurant: restaurantID
 
         });

@@ -1,8 +1,10 @@
+const cloudinary = require('../../config/cloudinary');
 const Product = require('../../models/Product');
 const { verifyFields } = require('../../services/ProductService');
 const productService = require('../../services/ProductService');
 const { verifyID } = require('../../utils/MongoUtils');
 const controller = {};
+const upload = require('../../utils/multer');
 
 controller.createProduct = async(req, res) => {
     
@@ -13,7 +15,8 @@ controller.createProduct = async(req, res) => {
 
     const {restaurant} = req;
     try{   
-        const createProduct = await productService.create(req.body,restaurant._id);
+        const result = await cloudinary.uploader.upload(req.file.path);
+        const createProduct = await productService.create(req.body,result.secure_url,restaurant._id);
         if(!createProduct.success){
             return res.status(409).json(createProduct.content);
         }
