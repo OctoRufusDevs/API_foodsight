@@ -70,6 +70,14 @@ service.create = async({name, description, price, image}, restaurantID ) => {
                     error: "Product not created"
                 }
             }
+        }else{
+            serviceResponse = {
+                success: true,
+                content: {
+                    id: productSaved._id,
+                    message: "Product created",
+                }
+            }
         }
 
         return serviceResponse;
