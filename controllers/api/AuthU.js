@@ -87,16 +87,9 @@ controller.forgotPassword = async (req,res) => {
 	//luego guardar
 
 	//Enviando el correo
-	const nodemailer = require('nodemailer');
-
-	const transporter = nodemailer.createTransport({
-		service: 'gmail',
-		auth: {
-		  user: process.env.SENDEREMAIL,
-		  pass: process.env.SENDERPASSWORD
-		}
-	  });
-	  const mailOptions = {
+	const sgMail = require('@sendgrid/mail');
+	sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+	  const msg = {
 		from: 'ilikeoctocats@gmail.com',
 		to: 'secg.1994@gmail.com',
 		subject: 'FoodSight Password Reset',
@@ -105,18 +98,18 @@ controller.forgotPassword = async (req,res) => {
 		'http://' + req.headers.host + '/test/authU/reset/' + token + '\n\n' +
 		'If you did not request this, please ignore this email and your password will remain unchanged.\n'
 	  };
-
-	transporter.sendMail(mailOptions, function(error, info){
-		if (error) {
-			console.log(error);
-			req.flash('error', 'An error has ocurred, please contact the admin');
-			return res.redirect('/test/authU/forgot');
-		} else {
+	sgMail
+		.send(msg)
+		.then(() => {
 			console.log('Email sent')
 			req.flash('info', 'An e-mail has been sent to with further instructions.');
 			return res.redirect('/test/authU/forgot');
-		}
-	  });
+	  	})
+	  	.catch((error) => {
+			console.log(error);
+			req.flash('error', 'An error has ocurred, please contact the admin');
+			return res.redirect('/test/authU/forgot');
+	  	})
 
 }
 
