@@ -27,8 +27,9 @@ const UserSchema = new Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: "Restaurant"
         }]
-    }
-    
+    },
+    resetPasswordToken: String,
+    resetPasswordExpires: Date
 });
 
 UserSchema
