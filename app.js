@@ -14,6 +14,9 @@ const {connect} = require("./config/database.js");
 connect();
 
 var app = express();
+//var env = require('node-env-file'); // .env file
+//env(__dirname + '/gmail.env'); //Para correr localmente crear el archivo gmail.env y añadir las variables
+//SENDEREMAIL Y SENDERPASSWORD
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug'); 
 app.use(logger('dev'));
