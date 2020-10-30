@@ -88,7 +88,7 @@ controller.forgotPassword = async (req,res) => {
 
 	//Enviando el correo
 	const nodemailer = require('nodemailer');
-	
+
 	const transporter = nodemailer.createTransport({
 		service: 'gmail',
 		auth: {
@@ -108,6 +108,7 @@ controller.forgotPassword = async (req,res) => {
 
 	transporter.sendMail(mailOptions, function(error, info){
 		if (error) {
+			console.log(error);
 			req.flash('error', 'An error has ocurred, please contact the admin');
 			return res.redirect('/test/authU/forgot');
 		} else {
