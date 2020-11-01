@@ -277,4 +277,30 @@ service.savedFavoriteRestaurant = async (user, restaurantID) =>{
     }
 }
 
+service.findOneWithToken = async (token) => {
+    let serviceResponse={
+        success: true,
+        content:{}
+    }
+
+    try{
+        const user = await UserModel.findOne({resetPasswordToken: token, resetPasswordExpires: { $gt: Date.now() }})
+            .select("-hashedPassword")
+            .exec();
+        if(!user){
+            serviceResponse={
+                success: false,
+                content: {
+                    error: "User not found"
+                }
+            }
+        }else{
+            serviceResponse.content=user;
+        }
+        return serviceResponse;
+    }catch (e) {
+        throw e;
+    }
+}
+
 module.exports = service;

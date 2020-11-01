@@ -1,5 +1,6 @@
 const UserService = require("../../services/UserService");
 const crypto = require('crypto');
+const { token } = require("morgan");
 const controller = {}
 
 controller.register = async (req, res) => { 
@@ -80,10 +81,13 @@ controller.forgotPassword = async (req,res) => {
 		req.flash('error', 'No account with that email address exists.');
 		return res.redirect('/test/authU/forgot');
 	}
-
+	const {email} = userExists.content;
 	
-	//user.resetPasswordToken = token;
-	//user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+	const userUpdated = await UserService.updateById(userExists.content, {
+		resetPasswordToken: token,
+		resetPasswordExpires:  Date.now() + 3600000, //1 hora
+	});
+	console.log(userUpdated.success);
 	//luego guardar
 
 	//Enviando el correo
@@ -91,7 +95,7 @@ controller.forgotPassword = async (req,res) => {
 	sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 	  const msg = {
 		from: 'ilikeoctocats@gmail.com',
-		to: 'secg.1994@gmail.com',
+		to: email,
 		subject: 'FoodSight Password Reset',
 		text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
 		'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
@@ -107,7 +111,7 @@ controller.forgotPassword = async (req,res) => {
 	  	})
 	  	.catch((error) => {
 			console.log(error);
-			req.flash('error', 'An error has ocurred, please contact the admin');
+			req.flash('error', 'An error has ocurred while sending the email, please contact the admin.');
 			return res.redirect('/test/authU/forgot');
 	  	})
 
@@ -117,6 +121,61 @@ controller.renderForgotView = async (req,res) => {
 	return res.render('forgot', {
 		user: req.user
 	  });
+}
+
+controller.loadUpdateForm = async(req,res) => {
+	const userExists = await UserService.findOneWithToken(req.params.token, Date.now());
+	if(!userExists.success){
+		req.flash('error', 'Password reset token is invalid or has expired.');
+		return res.redirect('/test/authU/forgot');
+	}
+	return res.render('reset',{
+		user: req.user
+	});
+}
+
+controller.updatePassword = async(req,res) =>{
+	const userExists = await UserService.findOneWithToken(req.params.token, Date.now());
+	if(!userExists.success){
+		req.flash('error', 'Password reset token is invalid or has expired.');
+		return res.redirect('/test/authU/forgot');
+	}
+	const { password, confirm } = req.body;
+	
+	if(password.toString() != confirm.toString()){
+		req.flash('error', 'The password must be the same in both fields');
+		return res.redirect('/test/authU/reset/'+userExists.token);
+	}
+
+	const userUpdated = await UserService.updateById(userExists.content, {
+		password: req.body.password,
+		resetPasswordToken: undefined,
+		resetPasswordExpires:  undefined,
+	});
+
+	const {email} = userExists.content;
+	//Enviando el correo
+	const sgMail = require('@sendgrid/mail');
+	sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+	  const msg = {
+		from: 'ilikeoctocats@gmail.com',
+		to: email,
+		subject: 'Your password has been changed',
+		text: 'Hello,\n\n' +
+		'This is a confirmation that the password for your account has just been changed.\n'
+	  };
+	sgMail
+		.send(msg)
+		.then(() => {
+			console.log('Email sent')
+			req.flash('info', 'An e-mail has been sent confirming the password change.');
+			return res.redirect('/test/authU/forgot');
+	  	})
+	  	.catch((error) => {
+			console.log(error);
+			req.flash('error', 'An error has ocurred while sending the email, please contact the admin.');
+			return res.redirect('/test/authU/forgot');
+	  	})
 }
 
 module.exports = controller;
