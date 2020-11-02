@@ -77,7 +77,7 @@ service.verifyUpdatedFields = ({name, email, password, description, phone, ratin
     return serviceResponse;
 }
 
-service.create = async({name, email, password, description, phone, rating, photo, facebook, instagram}) => {
+service.create = async({name, email, password, description, location, address, phone, rating, photo, facebook, instagram}) => {
     let serviceResponse = {
         success: true,
         content: {
@@ -91,6 +91,8 @@ service.create = async({name, email, password, description, phone, rating, photo
             email,
             password,
             description,
+            location,
+            address,
             phone,
             rating,
             photo,
