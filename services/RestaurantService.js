@@ -159,7 +159,12 @@ service.updateById = async (restaurant, contentToUpdate) =>{
     }
 
     try {
-        const restaurantUpdated = await RestaurantModel.findByIdAndUpdate(restaurant._id,{...contentToUpdate});
+        Object.keys(contentToUpdate).forEach(
+            key =>{
+                restaurant[key] =contentToUpdate[key];
+            }
+        );
+        const restaurantUpdated = await restaurant.save();
         if(!restaurantUpdated){
             serviceResponse={
                 success: false,

@@ -9,18 +9,32 @@ controller.forgotPassword = async (req,res) => {
 		token = buf.toString('hex');
 	});
 	const { identifier } = req.body;
-	const userExists = await UserService.findOneUsernameEmail(identifier, identifier);
-	if (!userExists.success) { 
+    const userExists = await UserService.findOneUsernameEmail(identifier, identifier);
+    const restaurantExists = await RestaurantService.findOneByEmail(identifier);
+	if (!userExists.success && !restaurantExists.success) { 
 		req.flash('error', 'No account with that email address exists.');
 		return res.redirect('/reset/forgot');
-	}
-	const {email} = userExists.content;
+    }
+    var correo;
+    if(userExists.success){
+        const {email} = userExists.content;
+        const userUpdated = await UserService.updateById(userExists.content, {
+            resetPasswordToken: token,
+            resetPasswordExpires:  Date.now() + 3600000, //1 hora
+        });
+        correo = email;
+        console.log(userUpdated.success);
+    }else{
+        const {email} = restaurantExists.content;
+        const restaurantUpdated = await RestaurantService.updateById(restaurantExists.content,{
+            resetPasswordToken: token,
+            resetPasswordExpires:  Date.now() + 3600000, //1 hora
+        });
+        correo = email;
+        console.log(restaurantUpdated.success);      
+    }
 	
-	const userUpdated = await UserService.updateById(userExists.content, {
-		resetPasswordToken: token,
-		resetPasswordExpires:  Date.now() + 3600000, //1 hora
-	});
-	console.log(userUpdated.success);
+	
 	//luego guardar
 
 	//Enviando el correo
@@ -28,7 +42,7 @@ controller.forgotPassword = async (req,res) => {
 	sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 	  const msg = {
 		from: 'ilikeoctocats@gmail.com',
-		to: email,
+		to: correo,
 		subject: 'FoodSight Password Reset',
 		text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
 		'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
@@ -55,8 +69,10 @@ controller.renderForgotView = async (req,res) => {
 }
 
 controller.loadUpdateForm = async(req,res) => {
-	const userExists = await UserService.findOneWithToken(req.params.token, Date.now());
-	if(!userExists.success){
+    const userExists = await UserService.findOneWithToken(req.params.token, Date.now());
+    const restaurantExists = await RestaurantService.findOneWithToken(req.params.token, Date.now());
+
+	if(!userExists.success && !restaurantExists.success){
 		req.flash('error', 'Password reset token is invalid or has expired.');
 		return res.redirect('/reset/forgot');
 	}
@@ -66,8 +82,9 @@ controller.loadUpdateForm = async(req,res) => {
 }
 
 controller.updatePassword = async(req,res) =>{
-	const userExists = await UserService.findOneWithToken(req.params.token, Date.now());
-	if(!userExists.success){
+    const userExists = await UserService.findOneWithToken(req.params.token, Date.now());
+    const restaurantExists = await RestaurantService.findOneWithToken(req.params.token, Date.now());
+	if(!userExists.success && !restaurantExists.success){
 		req.flash('error', 'Password reset token is invalid or has expired.');
 		return res.redirect('/reset/forgot');
 	}
@@ -77,20 +94,35 @@ controller.updatePassword = async(req,res) =>{
 		req.flash('error', 'The password must be the same in both fields');
 		return res.redirect('/reset/changePass/'+userExists.token);
 	}
+    var correo;
+    if(userExists.success){
+        const {email} = userExists.content;
+        const userUpdated = await UserService.updateById(userExists.content, {
+            password: req.body.password,
+            resetPasswordToken: undefined,
+            resetPasswordExpires:  undefined,
+        });
+        correo = email;
+        console.log(userUpdated.success);
+    }else{
+        const {email} = restaurantExists.content;
+        const restaurantUpdated = await RestaurantService.updateById(restaurantExists.content, {
+            password: req.body.password,
+            resetPasswordToken: undefined,
+            resetPasswordExpires: undefined,
+        });
+        correo = email;
+        console.log(restaurantUpdated.success);    
+    }
+	
 
-	const userUpdated = await UserService.updateById(userExists.content, {
-		password: req.body.password,
-		resetPasswordToken: undefined,
-		resetPasswordExpires:  undefined,
-	});
-
-	const {email} = userExists.content;
+	
 	//Enviando el correo
 	const sgMail = require('@sendgrid/mail');
 	sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 	  const msg = {
 		from: 'ilikeoctocats@gmail.com',
-		to: email,
+		to: correo,
 		subject: 'Your password has been changed',
 		text: 'Hello,\n\n' +
 		'This is a confirmation that the password for your account has just been changed.\n'
