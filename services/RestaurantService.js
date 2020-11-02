@@ -246,4 +246,30 @@ service.findOneByEmail = async(email) => {
     }
 }
 
+service.findOneWithToken = async (token) => {
+    let serviceResponse={
+        success: true,
+        content:{}
+    }
+
+    try{
+        const restaurant = await RestaurantModel.findOne({resetPasswordToken: token, resetPasswordExpires: { $gt: Date.now() }})
+            .select("-hashedPassword")
+            .exec();
+        if(!restaurant){
+            serviceResponse={
+                success: false,
+                content: {
+                    error: "Restaurant not found"
+                }
+            }
+        }else{
+            serviceResponse.content=restaurant;
+        }
+        return serviceResponse;
+    }catch (e) {
+        throw e;
+    }
+}
+
 module.exports = service;

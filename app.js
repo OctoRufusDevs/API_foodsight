@@ -8,6 +8,7 @@ var session = require('express-session');
 var indexRouter = require('./routes/index');
 const apiRouter = require('./routes/api');
 const userRouter = require('./routes/test');
+const resetRouter = require('./routes/reset');
 
 const {connect} = require("./config/database.js");
 
@@ -31,6 +32,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/api', apiRouter);
 app.use('/test', userRouter);
+app.use('/reset', resetRouter);
 
 
 module.exports = app;
