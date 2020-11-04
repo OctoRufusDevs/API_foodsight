@@ -22,7 +22,7 @@ controller.register = async (req, res) => {
         if (!userRegistered.success) { 
             return res.status(409).json(userRegistered.content);
         }
-        return res.status(201).json(userRegistered.content);
+        return res.status(200).json(userRegistered._id);
     } catch (e) { 
         return res.status(500).json({
             error: "Internal Server Error"

@@ -159,6 +159,12 @@ service.register = async ({email,username,password}) => {
                 }
             }
         }
+        let serviceResponse={
+            success:true,
+            content:{
+                message:"User Registered"
+            }
+        }
         return serviceResponse
     }catch (e) {
         throw e;
