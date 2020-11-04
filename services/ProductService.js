@@ -1,14 +1,16 @@
 const ProductModel = require('../models/Product');
 const service = {};
 
-service.verifyFields = ({name, description, price, image}) => {
+service.verifyFields = ({body: {name, description, price}, file}) => {
+
     let serviceResponse = {
         success : true,
         content: {
             message: "Fields fine",
         }
     }
-    if(!name && !description && !price && !image){
+    
+    if(!name || !description || !price || !file){
         serviceResponse = {
             success: false,
             content: {
@@ -20,14 +22,14 @@ service.verifyFields = ({name, description, price, image}) => {
     return serviceResponse;
 }
 
-service.verifyUpdateFields = ({name, description, price, image}) => {
+service.verifyUpdateFields = ({body: {name, description, price, image}, file}) => {
     let serviceResponse = {
         success : true,
         content: {
             message: "Fields fine",
         }
     }
-    if(!name && !description && !price && !image){
+    if(!name && !description && !price && !file ){
         serviceResponse = {
             success: false,
             content: {
@@ -132,18 +134,28 @@ service.findOneById = async (_id) => {
     }
 }
 
-service.updateOneById= async (product, contentToUpdate) => {
+service.updateOneById= async (product, contentToUpdate,image) => {
     let serviceResponse = {
         success: true,
         content: {
             message: "Product Updated!"
         }
     }
-
+    
     try{
-        const updatedProduct = await ProductModel.findByIdAndUpdate(product._id, {
-            ...contentToUpdate
-        });
+        Object.keys(contentToUpdate).forEach(
+            key =>{
+                product[key] =contentToUpdate[key];
+            }
+            
+        );
+        if(image){
+            product['image'] = image;
+        }
+        // const updatedProduct = await ProductModel.findByIdAndUpdate(product._id, {
+        //     ...contentToUpdate
+        // });
+        const updatedProduct = await product.save();
         if(!updatedProduct){
             serviceResponse = {
                 success: false,
@@ -154,7 +166,7 @@ service.updateOneById= async (product, contentToUpdate) => {
         }
         return serviceResponse;
     }catch(e){
-        throw new Error("Internal Server Error");
+        throw  e;
     }
 }
 

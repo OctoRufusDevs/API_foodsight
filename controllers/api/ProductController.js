@@ -7,12 +7,12 @@ const controller = {};
 const upload = require('../../utils/multer');
 
 controller.createProduct = async(req, res) => {
+    console.log(req.file,"xd");
     
-    const fieldsValidation = productService.verifyFields(req.body);
+    const fieldsValidation = productService.verifyFields(req);
     if(!fieldsValidation.success){
         return res.status(400).json(fieldsValidation.content);
     }
-
     const {restaurant} = req;
     try{   
         const result = await cloudinary.uploader.upload(req.file.path);
@@ -61,26 +61,32 @@ controller.findAll = async(req, res) => {
 }
 
 controller.updateProduct = async (req, res) => {
+
     const {_id} = req.body;
     if(!verifyID(_id)){
         return res.status(400).json({
             error: "Error in ID"
         });
     }
-
-    const fieldVerified = productService.verifyUpdateFields(req.body);
+    
+    const fieldVerified = productService.verifyUpdateFields(req);
     if(!fieldVerified.success){
         return res.status(400).json(fieldVerified.content);
     }
-
+    let result;
     try{
         const productExists = await productService.findOneById(_id);
         if(!productExists){
             return res.status(404).json(productExists.content);
         }
+        if(req.file){
+            
+         result = await cloudinary.uploader.upload(req.file.path);
+        }
         const productUpdated = await productService.updateOneById(
             productExists.content,
-            fieldVerified.content
+            fieldVerified.content,
+            req.file ? result.secure_url : null
         );
         if(!productUpdated.success){
             return res.status(409).json(productUpdated.content);
