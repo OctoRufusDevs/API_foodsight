@@ -1,16 +1,14 @@
 const ProductModel = require('../models/Product');
 const service = {};
 
-service.verifyFields = ({body: {name, description, price}, file}) => {
-
+service.verifyFields = ({name, description, price, image}) => {
     let serviceResponse = {
         success : true,
         content: {
             message: "Fields fine",
         }
     }
-    
-    if(!name || !description || !price || !file){
+    if(!name && !description && !price && !image){
         serviceResponse = {
             success: false,
             content: {
@@ -22,14 +20,14 @@ service.verifyFields = ({body: {name, description, price}, file}) => {
     return serviceResponse;
 }
 
-service.verifyUpdateFields = ({body: {name, description, price, image}, file}) => {
+service.verifyUpdateFields = ({name, description, price, image}) => {
     let serviceResponse = {
         success : true,
         content: {
             message: "Fields fine",
         }
     }
-    if(!name && !description && !price && !file ){
+    if(!name && !description && !price && !image){
         serviceResponse = {
             success: false,
             content: {
@@ -77,6 +75,7 @@ service.create = async({name, description, price}, imageurl, restaurantID ) => {
                 success: true,
                 content: {
                     id: productSaved._id,
+                    photo:productSaved.image,
                     message: "Product created",
                 }
             }
@@ -134,28 +133,18 @@ service.findOneById = async (_id) => {
     }
 }
 
-service.updateOneById= async (product, contentToUpdate,image) => {
+service.updateOneById= async (product, contentToUpdate) => {
     let serviceResponse = {
         success: true,
         content: {
             message: "Product Updated!"
         }
     }
-    
+
     try{
-        Object.keys(contentToUpdate).forEach(
-            key =>{
-                product[key] =contentToUpdate[key];
-            }
-            
-        );
-        if(image){
-            product['image'] = image;
-        }
-        // const updatedProduct = await ProductModel.findByIdAndUpdate(product._id, {
-        //     ...contentToUpdate
-        // });
-        const updatedProduct = await product.save();
+        const updatedProduct = await ProductModel.findByIdAndUpdate(product._id, {
+            ...contentToUpdate
+        });
         if(!updatedProduct){
             serviceResponse = {
                 success: false,
@@ -166,7 +155,7 @@ service.updateOneById= async (product, contentToUpdate,image) => {
         }
         return serviceResponse;
     }catch(e){
-        throw  e;
+        throw new Error("Internal Server Error");
     }
 }
 
