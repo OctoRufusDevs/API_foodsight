@@ -77,6 +77,7 @@ service.create = async({name, description, price}, imageurl, restaurantID ) => {
                 success: true,
                 content: {
                     id: productSaved._id,
+                    photo: productSaved.image,
                     message: "Product created",
                 }
             }
