@@ -5,7 +5,7 @@ const UserController = require('../../controllers/api/UserController');
 
 router.post("/addFavoriteProduct", UserController.saveProduct);
 router.post("/addFavoriteRestaurant", UserController.saveRestaurant);
-router.get("/favoriteProducts", UserController.getFavProducts);
-router.get("/favoriteRestaurant", UserController.getFavRestaurant);
+router.post("/favoriteProducts", UserController.getFavProducts);
+router.post("/favoriteRestaurant", UserController.getFavRestaurant);
 
 module.exports = router;
