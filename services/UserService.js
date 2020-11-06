@@ -309,4 +309,49 @@ service.findOneWithToken = async (token) => {
     }
 }
 
+service.removeFavoriteRestaurant = async (user, restaurantID) =>{
+    let serviceResponse = {
+        success:true,
+        content:{
+            message:"Restaurant removed"
+        }
+    }
+
+    try {
+        const alreadyExists=user.savedRestaurants.some(restaurant =>{
+            restaurant.equals(restaurantID)
+        });
+        if(alreadyExists){
+            serviceResponse={
+                success: true,
+                content: {
+                    message: "Restaurant already removed"
+                }
+            }
+            return serviceResponse;
+        }
+        
+        const index = user.savedRestaurants.indexOf(restaurantID);
+        if(index > -1){
+            user.savedRestaurants.splice(index,1);
+        }
+
+        //user.savedRestaurants.push(restaurantID);
+        const userUpdated = await user.save();
+
+        if(!userUpdated){
+            serviceResponse={
+                success: false,
+                content: {
+                    message: "Cannot save restaurant"
+                }
+            }
+        }
+        return serviceResponse;
+
+    }catch (e) {
+        throw e;
+    }
+}
+
 module.exports = service;

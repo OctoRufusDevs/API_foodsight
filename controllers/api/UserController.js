@@ -1,7 +1,8 @@
 const UserService = require("../../services/UserService");
 const ProductService = require("../../services/ProductService");
 const RestaurantService = require("../../services/RestaurantService")
-const {verifyID} = require("../../utils/MongoUtils")
+const {verifyID} = require("../../utils/MongoUtils");
+const User = require("../../models/User");
 const controller = {}
 
 controller.getUser = (req,res)=>{
@@ -148,6 +149,43 @@ controller.getFavRestaurant = async (req,res) =>{
         })
 
     }catch (e) {
+        return res.status(500).json({
+            error:"Internal Server Error"
+        })
+    }
+
+}
+controller.removeFavRestaurant = async (req,res) => {
+    const {_id, _restaurantId} = req.body;
+
+    if(!verifyID(_id)){
+        return res.status(400).json({
+            error:"Error in ID"
+        });
+    }
+    try {
+        const userExists = await UserService.findOneById(_id);
+        if(!userExists.success){
+            return res.status(404).json(userExists.content);
+        }
+
+        const userUpdated = await UserService.removeFavoriteRestaurant(userExists.content,_restaurantId);
+        const user = userExists.content;
+        if(userUpdated.success){
+            return res.status(200).json({
+                success: true,
+                ...user.savedRestaurants,            
+            })
+        }else{
+            return res.status().json({
+                success: false,
+                message: "Error while removing the Favorite Restaurant",
+            })
+        }
+        
+
+    }catch (e) {
+        console.log(e);
         return res.status(500).json({
             error:"Internal Server Error"
         })

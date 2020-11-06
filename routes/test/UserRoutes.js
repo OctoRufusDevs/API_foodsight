@@ -7,5 +7,6 @@ router.post("/addFavoriteProduct", UserController.saveProduct);
 router.post("/addFavoriteRestaurant", UserController.saveRestaurant);
 router.post("/favoriteProducts", UserController.getFavProducts);
 router.post("/favoriteRestaurant", UserController.getFavRestaurant);
+router.post("/removeFavoriteRestaurant", UserController.removeFavRestaurant);
 
 module.exports = router;
