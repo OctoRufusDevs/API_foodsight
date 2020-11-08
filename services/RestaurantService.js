@@ -2,12 +2,12 @@ const RestaurantModel = require('../models/Restaurant');
 const emailRegex = new RegExp("^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$");
 const service = {};
 
-service.verifyRegisterFields = ({name, email, password, description, phone, rating ,photo, facebook, instagram}) => {
+service.verifyRegisterFields = ({body: {name, email, password, description, phone, rating, facebook, instagram}, file}) => {
     let serviceResponse = {
         success:true,
         content:{}
     }
-    if(!description || !email || !password || !name || !phone || !rating || !photo || !facebook || !instagram){
+    if(!description || !email || !password || !name || !phone || !rating || !file || !facebook || !instagram){
         serviceResponse = {
             success: false,
             content: {
@@ -47,7 +47,7 @@ service.verifyLoginFields = ({email, password}) =>{
 
 	return serviceResponse;
 }
-service.verifyUpdatedFields = ({name, email, password, description, phone, rating ,photo, facebook, instagram})=>{
+service.verifyUpdatedFields = ({ body: {name, email, password, description, phone, rating ,photo, facebook, instagram}, file})=>{
     let serviceResponse={
         success:true,
         content: {}
@@ -77,7 +77,7 @@ service.verifyUpdatedFields = ({name, email, password, description, phone, ratin
     return serviceResponse;
 }
 
-service.create = async({name, email, password, description, location, address, phone, rating, photo, facebook, instagram}) => {
+service.create = async({name, email, password, description, location, address, phone, rating, facebook, instagram}, photo) => {
     let serviceResponse = {
         success: true,
         content: {
@@ -152,7 +152,7 @@ service.findOneById = async (_id) =>{
     }
 }
 
-service.updateById = async (restaurant, contentToUpdate) =>{
+service.updateById = async (restaurant, contentToUpdate, photo) =>{
     let serviceResponse ={
         success:true,
         content:{
@@ -166,6 +166,9 @@ service.updateById = async (restaurant, contentToUpdate) =>{
                 restaurant[key] =contentToUpdate[key];
             }
         );
+        if(photo){
+            restaurant['photo'] = photo;
+        }
         const restaurantUpdated = await restaurant.save();
         if(!restaurantUpdated){
             serviceResponse={

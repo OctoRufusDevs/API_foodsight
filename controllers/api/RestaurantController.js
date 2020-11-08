@@ -1,18 +1,25 @@
+const cloudinary = require('../../config/cloudinary');
 const RestaurantService = require('../../services/RestaurantService');
 const controller = {};
+const upload = require('../../utils/multer');
+const { verifyID } = require('../../utils/MongoUtils');
+
+
 
 controller.createRestaurant = async(req, res) => {
     const {body} = req;
     try{
        
-        const check = await RestaurantService.verifyRegisterFields(body);
+        const check = await RestaurantService.verifyRegisterFields(req);
         if(!check.success){
             return res.status(400).json( check.content);
         }
-
-        const prueba = await RestaurantService.create(body);
-        console.log(body);
-        return res.status(201).json(prueba.content);
+        const result = await cloudinary.uploader.upload(req.file.path);
+        const createRestaurant = await RestaurantService.create(body, result.secure_url);
+        if(!createRestaurant.success){
+            return res.status(409).json(createRestaurant.content);
+        }
+        return res.status(201).json(createRestaurant.content);
     }catch(e){
         return res.status(500).json({error: 'Somos tontos'})
     }
@@ -34,32 +41,38 @@ controller.finOneById = async (req, res) =>{
 
 controller.updateById = async (req, res) =>{
     const {_id} = req.body;
-
-    const verifyField = RestaurantService.verifyUpdatedFields(req.body);
+    console.log(req.body);
+    if(!verifyID(_id)){
+        return res.status(400).json({
+            error: "Error in IDc"
+        });
+    }
+    const verifyField = RestaurantService.verifyUpdatedFields(req);
     if(!verifyField.success){
         return res.status(400).json(verifyField.content);
     }
-    // console.log(req.body);
-    // if(!restaurant){
-    //     return res.status(404).json({
-    //         error: "Restaurant not found"
-    //     });
-    // }
-
+    let result;
     try {
-
         const restaurantExists = await RestaurantService.findOneById(_id);
         if(!restaurantExists.success){
             return res.status(404).json(RestaurantExists.content);
         }
-
-        const restaurantUpdated = await RestaurantService.updateById(restaurantExists.content,verifyField.content);
+        if(req.file){
+            result = await cloudinary.uploader.upload(req.file.path);
+           }
+        const restaurantUpdated = await RestaurantService.updateById(
+            restaurantExists.content,
+            verifyField.content,
+            req.file ? result.secure_url : null
+        );
         if(!restaurantUpdated.success){
             return res.status(409).json(restaurantUpdated.content);
         }
         return res.status(200).json(restaurantUpdated.content);
     }catch (e) {
-        return res
+        return res.status(500).json({
+            error: "Internal Server Error"
+        })
     }
 
 }

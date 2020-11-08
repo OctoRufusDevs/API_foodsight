@@ -1,14 +1,16 @@
 const RestaurantService = require("../../services/RestaurantService");
-
+const upload = require('../../utils/multer');
+const cloudinary = require('../../config/cloudinary');
 const controller = {}
 
 controller.register = async (req, res) => { 
-    const fieldValidation = RestaurantService.verifyRegisterFields(req.body);
+	console.log(req.body);
+    const fieldValidation = RestaurantService.verifyRegisterFields(req);
     if (!fieldValidation.success) { 
         return res.status(400).json(fieldValidation.content)
     }
     try {
-        const {email } = req.body;
+        const {email} = req.body;
         const restaurantExists = await RestaurantService.findOneByEmail(email);
         
         if (restaurantExists.success) { 
@@ -16,8 +18,8 @@ controller.register = async (req, res) => {
                 error: "Email already registered"
             });
         }
-
-        const restaurantRegistered = await RestaurantService.create(req.body)
+		const result = await cloudinary.uploader.upload(req.file.path);
+        const restaurantRegistered = await RestaurantService.create(req.body,result.secure_url)
         if (!restaurantRegistered.success) { 
             return res.status(409).json(restaurantRegistered.content);
         }
