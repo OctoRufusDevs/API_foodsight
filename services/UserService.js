@@ -212,9 +212,7 @@ service.savedFavoriteProduct = async (user, productID) =>{
     }
 
     try {
-        const alreadyExists=user.savedProducts.some(product =>{
-            product.equals(productID)
-        });
+        const alreadyExists=user.savedProducts.some(product => product.equals(productID));
         if(alreadyExists){
             serviceResponse={
                 success: true,
@@ -252,12 +250,10 @@ service.savedFavoriteRestaurant = async (user, restaurantID) =>{
     }
 
     try {
-        const alreadyExists=user.savedRestaurants.some(restaurant =>{
-            restaurant.equals(restaurantID)
-        });
+        const alreadyExists=user.savedRestaurants.some(restaurant => restaurant.equals(restaurantID));
         if(alreadyExists){
             serviceResponse={
-                success: true,
+                success: false,
                 content: {
                     message: "Restaurant already saved"
                 }
@@ -318,12 +314,11 @@ service.removeFavoriteRestaurant = async (user, restaurantID) =>{
     }
 
     try {
-        const alreadyExists=user.savedRestaurants.some(restaurant =>{
-            restaurant.equals(restaurantID)
-        });
-        if(alreadyExists){
+        
+        const alreadyExists=user.savedRestaurants.some(restaurant => restaurant.equals(restaurantID));
+        if(!alreadyExists){
             serviceResponse={
-                success: true,
+                success: false,
                 content: {
                     message: "Restaurant already removed"
                 }
