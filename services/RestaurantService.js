@@ -178,6 +178,14 @@ service.updateById = async (restaurant, contentToUpdate, photo) =>{
                     error:"Restaurant not updated"
                 }
             }
+        }else{
+            serviceResponse={
+                success: true,
+                content: {
+                    message: "restaurant updated",
+                    photo: restaurantUpdated.photo,
+                }
+            }
         }
         return serviceResponse;
     }catch (e) {

@@ -164,6 +164,12 @@ service.updateOneById= async (product, contentToUpdate,image) => {
                     error: "Post not updated"
                 }
             }
+        }else{
+            serviceResponse = {
+                success: true,
+                message: 'product updated',
+                photo: updatedProduct.image,
+            }
         }
         return serviceResponse;
     }catch(e){
