@@ -167,8 +167,10 @@ service.updateOneById= async (product, contentToUpdate,image) => {
         }else{
             serviceResponse = {
                 success: true,
-                message: 'product updated',
-                photo: updatedProduct.image,
+                content: {
+                    message: 'product updated',
+                    photo: updatedProduct.image,
+                }
             }
         }
         return serviceResponse;
