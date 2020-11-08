@@ -113,6 +113,7 @@ service.create = async({name, email, password, description, location, address, p
                 success: true,
                 content: {
                     id: restaurantSaved._id,
+                    photo: productSaved.image,
                     message: "Restaurant created",
                 }
             }
