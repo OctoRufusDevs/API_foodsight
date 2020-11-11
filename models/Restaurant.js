@@ -14,6 +14,8 @@ const RestaurantSchema = new Schema({
     facebook: String,
     instagram: String,
     rating: Number,
+    sumVotes: Number,
+    numVotes: Number,
     resetPasswordToken: String,
     resetPasswordExpires: Date
 });

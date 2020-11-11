@@ -291,4 +291,33 @@ service.findOneWithToken = async (token) => {
     }
 }
 
+service.rateRestaurant = async (restaurant, rate) => {
+    let serviceResponse = {
+        success: true,
+        content: {
+            message: "Restaurant rated"
+        }
+    }
+    try{
+        restaurant.sumVotes += rate;
+        restaurant.numVotes += 1;
+        restaurant.rating = restaurant.sumVotes/restaurant.numVotes;
+
+        const restaurantUpdated = await restaurant.save();
+
+        if (!restaurantUpdated){
+            serviceResponse = {
+                success: false,
+                content: {
+                    message: "Restaurant not rated"
+                }
+            }
+        }
+
+        return serviceResponse;
+    }catch(e){
+        throw e;
+    }
+}
+
 module.exports = service;

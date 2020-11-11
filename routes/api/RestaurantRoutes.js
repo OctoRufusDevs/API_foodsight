@@ -9,4 +9,5 @@ router.get("/id/:_id",RestaurantController.finOneById);
 router.get("/all", RestaurantController.findAll);
 router.delete("/delete", RestaurantController.deleteOneByID);
 
+
 module.exports = router;

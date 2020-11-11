@@ -6,9 +6,11 @@ const RestaurantController = require('../controllers/api/RestaurantController');
 const ProductController = require('../controllers/api/ProductController');
 const AuthUMiddleware = require('../middleware/AuthU');
 const UserRoutes = require('./test/UserRoutes');
+const RatingRoutes = require('./test/Rating');
 
 router.use("/guestAllRestaurants", RestaurantController.findAll);
 router.use("/guestAllProducts", ProductController.findAll);
+router.use("/rating", RatingRoutes);
 
 router.use("/authU", authURouter);
 router.use(AuthUMiddleware.verifyAuth);
