@@ -3,6 +3,7 @@ const RestaurantService = require('../../services/RestaurantService');
 const controller = {};
 const upload = require('../../utils/multer');
 const { verifyID } = require('../../utils/MongoUtils');
+const Restaurant = require('../../models/Restaurant');
 
 
 
@@ -109,6 +110,32 @@ controller.deleteOneByID = async (req,res) =>{
         })
     }
 
+};
+
+controller.rateRestaurant = async (req, res) => {
+    const {_id, rate} = req.body;
+    
+    if(!verifyID(_id)){
+        return res.status(400).json({
+            error: "Error en id",
+        });
+    }
+    try{
+        const restaurantExists = await RestaurantService.findOneById(_id);
+        if(!restaurantExists.success){
+            return res.status(404).json(restaurantExists.content);
+        }
+        const restaurantRated = await RestaurantService.rateRestaurant(restaurantExists.content, rate);
+        if(!restaurantRated.success){
+            return res.status(409).json(restaurantRated.content);
+        }
+        return res.status(200).json(restaurantRated.content);
+    } catch(e){
+        console.log(e);
+        return res.status(500).json({
+            error: "Internal Server Error",
+        });
+    }
 };
 
 

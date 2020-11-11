@@ -13,7 +13,18 @@ const RestaurantSchema = new Schema({
     address: String,
     facebook: String,
     instagram: String,
-    rating: Number,
+    rating: {
+        type: Number,
+        default: 0,
+    },
+    sumVotes: {
+        type: Number,
+        default: 0,
+    },
+    numVotes: {
+        type: Number,
+        default: 0,
+    },
     resetPasswordToken: String,
     resetPasswordExpires: Date
 });
