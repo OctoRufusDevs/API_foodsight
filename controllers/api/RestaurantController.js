@@ -121,7 +121,7 @@ controller.rateRestaurant = async (req, res) => {
         });
     }
     try{
-        const restaurantExists = await restaurant.finOneById(_id);
+        const restaurantExists = await RestaurantService.findOneById(_id);
         if(!restaurantExists.success){
             return res.status(404).json(restaurantExists.content);
         }
@@ -131,6 +131,7 @@ controller.rateRestaurant = async (req, res) => {
         }
         return res.status(200).json(restaurantRated.content);
     } catch(e){
+        console.log(e);
         return res.status(500).json({
             error: "Internal Server Error",
         });

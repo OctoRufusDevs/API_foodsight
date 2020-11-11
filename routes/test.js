@@ -10,7 +10,7 @@ const RatingRoutes = require('./test/Rating');
 
 router.use("/guestAllRestaurants", RestaurantController.findAll);
 router.use("/guestAllProducts", ProductController.findAll);
-router.use("/rating", RatingRoutes);
+router.use("/", RatingRoutes);
 
 router.use("/authU", authURouter);
 router.use(AuthUMiddleware.verifyAuth);

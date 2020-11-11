@@ -2,12 +2,12 @@ const RestaurantModel = require('../models/Restaurant');
 const emailRegex = new RegExp("^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$");
 const service = {};
 
-service.verifyRegisterFields = ({body: {name, email, password, description, phone, rating, facebook, instagram}, file}) => {
+service.verifyRegisterFields = ({body: {name, email, password, description, phone, facebook, instagram}, file}) => {
     let serviceResponse = {
         success:true,
         content:{}
     }
-    if(!description || !email || !password || !name || !phone || !rating || !file || !facebook || !instagram){
+    if(!description || !email || !password || !name || !phone || !file || !facebook || !instagram){
         serviceResponse = {
             success: false,
             content: {
@@ -47,7 +47,7 @@ service.verifyLoginFields = ({email, password}) =>{
 
 	return serviceResponse;
 }
-service.verifyUpdatedFields = ({ body: {name, email, password, description, phone, rating ,photo, facebook, instagram}, file})=>{
+service.verifyUpdatedFields = ({ body: {name, email, password, description, phone ,photo, facebook, instagram}, file})=>{
     let serviceResponse={
         success:true,
         content: {}
@@ -60,7 +60,7 @@ service.verifyUpdatedFields = ({ body: {name, email, password, description, phon
     if(photo) serviceResponse.photo = photo;
     if(facebook) serviceResponse.facebook = facebook;
     if(instagram) serviceResponse.instagram = instagram;
-    if(rating) serviceResponse.content.rating = rating;
+  
 
     if(email){
         if(!emailRegex.test(email)){
@@ -77,7 +77,7 @@ service.verifyUpdatedFields = ({ body: {name, email, password, description, phon
     return serviceResponse;
 }
 
-service.create = async({name, email, password, description, location, address, phone, rating, facebook, instagram}, photo) => {
+service.create = async({name, email, password, description, location, address, phone, rating, facebook, instagram, sumVotes, numVotes}, photo) => {
     let serviceResponse = {
         success: true,
         content: {
@@ -97,7 +97,9 @@ service.create = async({name, email, password, description, location, address, p
             rating,
             photo,
             facebook,
-            instagram
+            instagram,
+            sumVotes,
+            numVotes,
         });
         
         const restaurantSaved = await restaurant.save();
@@ -299,9 +301,9 @@ service.rateRestaurant = async (restaurant, rate) => {
         }
     }
     try{
-        restaurant.sumVotes += rate;
+        restaurant.sumVotes += parseInt(rate);
         restaurant.numVotes += 1;
-        restaurant.rating = restaurant.sumVotes/restaurant.numVotes;
+        restaurant.rating = parseFloat(restaurant.sumVotes/restaurant.numVotes);
 
         const restaurantUpdated = await restaurant.save();
 
