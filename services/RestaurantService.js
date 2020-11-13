@@ -47,7 +47,7 @@ service.verifyLoginFields = ({email, password}) =>{
 
 	return serviceResponse;
 }
-service.verifyUpdatedFields = ({ body: {name, email, password, description, phone ,photo, facebook, instagram}, file})=>{
+service.verifyUpdatedFields = ({ body: {name, email, password, description, location, address, phone ,photo, facebook, instagram}, file})=>{
     let serviceResponse={
         success:true,
         content: {}
@@ -60,6 +60,8 @@ service.verifyUpdatedFields = ({ body: {name, email, password, description, phon
     if(photo) serviceResponse.photo = photo;
     if(facebook) serviceResponse.facebook = facebook;
     if(instagram) serviceResponse.instagram = instagram;
+    if(location) serviceResponse.location = location;
+    if(description) serviceResponse.address =address;
   
 
     if(email){
