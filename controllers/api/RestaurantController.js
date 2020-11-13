@@ -42,7 +42,6 @@ controller.finOneById = async (req, res) =>{
 
 controller.updateById = async (req, res) =>{
     const {_id} = req.body;
-    console.log(req.body);
     if(!verifyID(_id)){
         return res.status(400).json({
             error: "Error in IDc"

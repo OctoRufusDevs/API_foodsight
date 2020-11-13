@@ -58,10 +58,10 @@ service.verifyUpdatedFields = ({ body: {name, email, password, description, loca
     if(password) serviceResponse.content.password = password;
     if(description) serviceResponse.content.description = description;
     if(photo) serviceResponse.photo = photo;
-    if(facebook) serviceResponse.facebook = facebook;
-    if(instagram) serviceResponse.instagram = instagram;
-    if(location) serviceResponse.location = location;
-    if(address) serviceResponse.address =address;
+    if(facebook) serviceResponse.content.facebook = facebook;
+    if(instagram) serviceResponse.content.instagram = instagram;
+    if(location) serviceResponse.content.location = location;
+    if(address) serviceResponse.content.address =address;
   
 
     if(email){
@@ -76,6 +76,7 @@ service.verifyUpdatedFields = ({ body: {name, email, password, description, loca
         }
         serviceResponse.content.email = email;
     }
+    
     return serviceResponse;
 }
 
