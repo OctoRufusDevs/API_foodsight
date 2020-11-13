@@ -61,7 +61,7 @@ service.verifyUpdatedFields = ({ body: {name, email, password, description, loca
     if(facebook) serviceResponse.facebook = facebook;
     if(instagram) serviceResponse.instagram = instagram;
     if(location) serviceResponse.location = location;
-    if(description) serviceResponse.address =address;
+    if(address) serviceResponse.address =address;
   
 
     if(email){
