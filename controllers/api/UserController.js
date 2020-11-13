@@ -189,4 +189,31 @@ controller.removeFavRestaurant = async (req,res) => {
 
 }
 
+controller.removeFavProduct = async (req,res) => {
+    const {_productId} = req.body;
+    const {user} = req;
+    if(!verifyID(_productId)){
+        return res.status(400).json({
+            error:"Error in ID"
+        });
+    }
+    try {
+        const userUpdated = await UserService.removeFavoriteProduct(user,_productId);
+        if(userUpdated.success){
+            return res.status(200).json({
+                success: true,
+                ...user.savedProducts,            
+            })
+        }else{
+            return res.status(409).json(userUpdated.content);
+        }
+    }catch (e) {
+        console.log(e);
+        return res.status(500).json({
+            error:"Internal Server Error"
+        })
+    }
+
+}
+
 module.exports = controller;

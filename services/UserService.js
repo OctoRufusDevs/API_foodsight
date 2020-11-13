@@ -349,4 +349,48 @@ service.removeFavoriteRestaurant = async (user, restaurantID) =>{
     }
 }
 
+service.removeFavoriteProduct = async (user, productID) =>{
+    let serviceResponse = {
+        success:true,
+        content:{
+            message:"Product removed"
+        }
+    }
+
+    try {
+        
+        const alreadyExists=user.savedProducts.some(product => product.equals(productID));
+        if(!alreadyExists){
+            serviceResponse={
+                success: false,
+                content: {
+                    message: "Product already removed"
+                }
+            }
+            return serviceResponse;
+        }
+        
+        const index = user.savedProducts.indexOf(productID);
+        if(index > -1){
+            user.savedProducts.splice(index,1);
+        }
+
+        //user.savedRestaurants.push(restaurantID);
+        const userUpdated = await user.save();
+
+        if(!userUpdated){
+            serviceResponse={
+                success: false,
+                content: {
+                    message: "Cannot save product"
+                }
+            }
+        }
+        return serviceResponse;
+
+    }catch (e) {
+        throw e;
+    }
+}
+
 module.exports = service;
