@@ -317,6 +317,14 @@ service.rateRestaurant = async (restaurant, rate) => {
                     message: "Restaurant not rated"
                 }
             }
+        }else{
+            serviceResponse = {
+                success: true,
+                content: {
+                    message: "Restaurant rated",
+                    rating: restaurant.rating
+                }
+            }
         }
 
         return serviceResponse;
